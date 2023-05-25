@@ -7,6 +7,29 @@ services:
     volumes:
       - .:/go/src/
 
+  postgres-encoder-de-videos:
+    container_name: postgres-encoder-de-videos
+    image: postgres:latest
+    restart: unless-stopped
+    tty: true
+    # volumes:
+    #   - .pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - adm_videos_network
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: encoder-de-videos
+    security_opt:
+      - seccomp:unconfined
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
   rabbit-encoder-de-videos:
     container_name: rabbit-encoder-de-videos
     image: rabbitmq:3-management
