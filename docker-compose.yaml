@@ -10,25 +10,13 @@ services:
   postgres-encoder-de-videos:
     container_name: postgres-encoder-de-videos
     image: postgres:latest
-    restart: unless-stopped
-    tty: true
-    # volumes:
-    #   - .pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - adm_videos_network
+    restart: always
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
       POSTGRES_DB: encoder-de-videos
-    security_opt:
-      - seccomp:unconfined
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
-      timeout: 45s
-      interval: 10s
-      retries: 10
+    ports:
+      - "5432:5432"
 
   rabbit-encoder-de-videos:
     container_name: rabbit-encoder-de-videos
@@ -41,3 +29,8 @@ services:
     ports:
       - "15672:15672"
       - "5672:5672"
+    volumes:
+      - rabbit-encoder-de-videos:/var/lib/rabbitmq/
+
+volumes:
+  rabbit-encoder-de-videos:
